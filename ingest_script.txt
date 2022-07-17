@@ -1,0 +1,45 @@
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line 
+MERGE (customer:Customer {firstname:line.FirstName, lastname:line.LastName, gender:line.Gender, age:line.Age, email:line.EmailAddress, phone:line.PhoneNumber});
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line 
+MERGE (acc:Account {accnumber:line.AccountNumber});
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line 
+MERGE (card:Card {cardnumber:line.CardNumber});
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line 
+MERGE (loc:Address {location:line.Address, country:line.Country});
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line 
+MERGE (job:Job {title:line.JobTitle});
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/purchases.csv' AS line 
+MERGE (card:Card {cardnumber:line.CardNumber})
+    SET card.issuer=line.CardIssuer;
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/purchases.csv' AS line 
+MERGE (merchant:Merchant {name:line.Merchant});
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/purchases.csv' AS line
+MATCH (merchant:Merchant {name: line.Merchant})
+MATCH (card:Card {cardnumber: line.CardNumber}) 
+MERGE (card)-[:PAYS { id:line.TransactionID, amount:toFloat(line.Amount), tstamp:line.PurchaseDatetime}]->(merchant);
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/transfers.csv' AS line
+MATCH (a1:Account {accnumber: line.SenderAccountNumber})
+MATCH (a2:Account {accnumber: line.ReceiverAccountNumber}) 
+MERGE (a1)-[:TRANSFERS_TO { id:line.TransactionID, amount:toFloat(line.Amount), tstamp:line.TransferDatetime}]->(a2);
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line
+MATCH (c1:Customer {firstname:line.FirstName, lastname:line.LastName, phone:line.PhoneNumber, age:line.Age})
+MATCH (a1:Address {location:line.Address, country:line.Country}) 
+MERGE (c1)-[:LIVES_AT]->(a1);
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line
+MATCH (c1:Customer {firstname:line.FirstName, lastname:line.LastName, phone:line.PhoneNumber, age:line.Age})
+MATCH (j1:Job {title:line.JobTitle}) 
+MERGE (c1)-[:PERFORMS]->(j1);
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line
+MATCH (c1:Customer {firstname:line.FirstName, lastname:line.LastName, phone:line.PhoneNumber, age:line.Age})
+MATCH (a1:Account {accnumber:line.AccountNumber}) 
+MERGE (c1)-[:OWNS_AN]->(a1);
+LOAD CSV WITH HEADERS FROM 'https://gist.githubusercontent.com/maruthiprithivi/f11bf40b558879aca0c30ce76e7dec98/raw/f6800464bf4125b8dd218bc6168447a129205fdc/customers.csv' AS line
+MATCH (c1:Customer {firstname:line.FirstName, lastname:line.LastName, phone:line.PhoneNumber, age:line.Age})
+MATCH (c2:Card {cardnumber:line.CardNumber}) 
+MERGE (c1)-[:PAYS_BY]->(c2);
+CREATE CONSTRAINT acc_number ON (a:Account) ASSERT a.accnumber IS UNIQUE;
+CREATE CONSTRAINT card_number ON (c:Card) ASSERT (c.cardNumber) IS UNIQUE;
+CREATE INDEX transaction_id FOR (trns:Transaction) ON (trns.id);
+CREATE INDEX transfer_id FOR (trns:Transfer) ON (trns.id);
+
+CALL db.awaitIndexes();
