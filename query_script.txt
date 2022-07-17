@@ -1,0 +1,46 @@
+// Top 10 merchants by number of payments received
+match (cust:Customer)-[:PAYS_BY]->(crd:Card)-[trans:PAYS]->(merc:Merchant)
+return cust, merc, count(*) as payments, sum(trans.amount)
+order by payments desc
+limit 10;
+
+// Top 10 customer pairs by number of payments(directional)
+match (cust1:Customer)-[:OWNS_AN]->(acc1:Account)-[trans:TRANSFERS_TO]->(acc2:Account)<-[:OWNS_AN]-(cust2:Customer)
+return cust1, cust2, count(*) as payments, sum(trans.amount)
+order by payments desc
+limit 10;
+
+// Top 10 customer pairs by amount of transaction(non-directional)
+match (cust1:Customer)-[:OWNS_AN]->(:Account)-[trans1:TRANSFERS_TO]->(:Account)<-[:OWNS_AN]-(cust2:Customer)
+with cust1, cust2, count(*) as total_pay_freq1, sum(trans1.amount) as total_pay_sum1
+match (cust2)-[:OWNS_AN]->(:Account)-[trans2:TRANSFERS_TO]->(:Account)<-[:OWNS_AN]-(cust1)
+with cust1, cust2, total_pay_freq1, total_pay_sum1, count(*) as total_pay_freq2, sum(trans2.amount) as total_pay_sum2
+return cust1, cust2, total_pay_freq1+total_pay_freq2 as tot_freq, total_pay_sum1+total_pay_sum2 as tot_sum
+order by tot_sum desc
+limit 10
+
+// Top 10 countries in the dataset
+match (cust:Customer)-[:LIVES_AT]->(addr:Address)
+return addr.country, count(*) as num_custs
+order by num_custs desc
+limit 10;
+
+// Top 10 countries merchants get paid from
+match (cust:Customer)-[:LIVES_AT]->(addr:Address)
+with cust, addr
+match (cust)-[:PAYS_BY]->(card:Card)-[trans:PAYS]->(merc:Merchant)
+return addr.country, merc.name, count(*) as cnt_trans, sum(trans.amount) as trans_amt
+order by cnt_trans desc
+limit 10;
+
+// Top 10 customers being transferred amounts from other customers by count of transactions
+match (cust1:Customer)-[:OWNS_AN]->(acc1:Account)-[trans:TRANSFERS_TO]->(acc2:Account)<-[:OWNS_AN]-(cust2:Customer)
+return cust2, count(*) as cnt_trans, sum(trans.amount) as trans_amt
+order by cnt_trans desc
+limit 10;
+
+// Top 10 countries by average amount of transactions
+match (cust1:Customer)-[:OWNS_AN]->(acc1:Account)-[trans:TRANSFERS_TO]->(acc2:Account)<-[:OWNS_AN]-(cust2:Customer)-[:LIVES_AT]->(addr:Address)
+return addr.country, count(*) as cnt_trans, avg(trans.amount) as avg_trans_amt
+order by avg_trans_amt desc
+limit 10;
