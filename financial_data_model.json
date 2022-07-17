@@ -1,0 +1,234 @@
+{
+  "style": {
+    "font-family": "Fira Code",
+    "background-color": "#2B2B2B",
+    "background-image": "",
+    "background-size": "100%",
+    "node-color": "#2B2B2B",
+    "border-width": 2,
+    "border-color": "#A6B7C8",
+    "radius": 90,
+    "node-padding": 5,
+    "node-margin": 2,
+    "outside-position": "auto",
+    "node-icon-image": "",
+    "node-background-image": "",
+    "icon-position": "inside",
+    "icon-size": 64,
+    "caption-position": "inside",
+    "caption-max-width": 200,
+    "caption-color": "#A6B7C8",
+    "caption-font-size": 18,
+    "caption-font-weight": "normal",
+    "label-position": "inside",
+    "label-display": "bare",
+    "label-color": "#A6B7C8",
+    "label-background-color": "#ffffff",
+    "label-border-color": "#000000",
+    "label-border-width": 4,
+    "label-font-size": 18,
+    "label-padding": 5,
+    "label-margin": 4,
+    "directionality": "directed",
+    "detail-position": "inline",
+    "detail-orientation": "parallel",
+    "arrow-width": 2,
+    "arrow-color": "#A6B7C8",
+    "margin-start": 0,
+    "margin-end": 0,
+    "margin-peer": 20,
+    "attachment-start": "normal",
+    "attachment-end": "normal",
+    "relationship-icon-image": "",
+    "type-color": "#A6B7C8",
+    "type-background-color": "#2B2B2B",
+    "type-border-color": "#000000",
+    "type-border-width": 0,
+    "type-font-size": 18,
+    "type-padding": 5,
+    "property-position": "inside",
+    "property-alignment": "colon",
+    "property-color": "#A6B7C8",
+    "property-font-size": 18,
+    "property-font-weight": "normal"
+  },
+  "nodes": [
+    {
+      "id": "n0",
+      "position": {
+        "x": -118.50305097161805,
+        "y": -121.34414403988359
+      },
+      "caption": "",
+      "labels": [
+        "Customer"
+      ],
+      "properties": {
+        "firstname": "",
+        "lastname": "",
+        "gender": "",
+        "age": "",
+        "email": "",
+        "phone": ""
+      },
+      "style": {
+        "radius": 120
+      }
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": -118.5030509716181,
+        "y": -441.30220763796524
+      },
+      "caption": "",
+      "labels": [
+        "Account"
+      ],
+      "properties": {
+        "accnumber": ""
+      },
+      "style": {}
+    },
+    {
+      "id": "n3",
+      "position": {
+        "x": -482.6051722427087,
+        "y": -121.34414403988347
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "Card"
+      ],
+      "properties": {
+        "cardnumber": "",
+        "issuer": ""
+      }
+    },
+    {
+      "id": "n4",
+      "position": {
+        "x": 245.5990702994726,
+        "y": -121.34414403988347
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "Job"
+      ],
+      "properties": {
+        "title": ""
+      }
+    },
+    {
+      "id": "n5",
+      "position": {
+        "x": -482.6051722427087,
+        "y": -485.4462653109741
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "Merchant"
+      ],
+      "properties": {
+        "name": ""
+      }
+    },
+    {
+      "id": "n6",
+      "position": {
+        "x": -118.50305097161805,
+        "y": 222.21386820586486
+      },
+      "caption": "",
+      "style": {},
+      "labels": [
+        "Address"
+      ],
+      "properties": {
+        "location": "",
+        "country": ""
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "n0",
+      "type": "OWNS_AN",
+      "style": {
+        "type-font-size": 15,
+        "detail-orientation": "horizontal"
+      },
+      "properties": {},
+      "fromId": "n0",
+      "toId": "n2"
+    },
+    {
+      "id": "n1",
+      "type": "PAYS_BY",
+      "style": {
+        "type-font-size": 15
+      },
+      "properties": {},
+      "fromId": "n0",
+      "toId": "n3"
+    },
+    {
+      "id": "n2",
+      "type": "PERFORMS",
+      "style": {
+        "type-font-size": 15
+      },
+      "properties": {},
+      "fromId": "n0",
+      "toId": "n4"
+    },
+    {
+      "id": "n3",
+      "type": "PAYS",
+      "style": {
+        "type-font-size": 15,
+        "detail-position": "above",
+        "detail-orientation": "perpendicular"
+      },
+      "properties": {
+        "id": "",
+        "amount": "",
+        "timestamp": ""
+      },
+      "fromId": "n3",
+      "toId": "n5"
+    },
+    {
+      "id": "n4",
+      "type": "TRANSFERS_TO",
+      "style": {
+        "type-font-size": 12,
+        "property-position": "outside",
+        "property-alignment": "colon",
+        "margin-peer": 50,
+        "attachment-start": "normal"
+      },
+      "properties": {
+        "id": "",
+        "amount": "",
+        "timestamp": ""
+      },
+      "fromId": "n2",
+      "toId": "n2"
+    },
+    {
+      "id": "n5",
+      "type": "LIVES_AT",
+      "style": {
+        "type-font-size": 15,
+        "detail-orientation": "perpendicular"
+      },
+      "properties": {},
+      "fromId": "n0",
+      "toId": "n6"
+    }
+  ]
+}
